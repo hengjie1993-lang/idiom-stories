@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#faf6ee" />
-<title>小故囊 · 成语故事</title>
+<title>成语小书</title>
 <link rel="manifest" href="manifest.webmanifest" />
 <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
 <style>
@@ -289,7 +289,7 @@
           <span class="bars"><i></i></span> 目录 {{ all.length }} 则
         </button>
       </div>
-      <h1 class="brand">小故囊</h1>
+      <h1 class="brand">成语小书</h1>
       <div class="sub">成语故事 · 共 {{ all.length }} 则</div>
       <div class="search">
         <span class="ico"></span>
@@ -346,7 +346,7 @@
     </template>
 
     <footer>
-      故事依据《诗经》《史记》《战国策》《庄子》《论语》等公版古籍原文改写<br />
+      故事依据公版古籍原文与台湾教育部《成语典》白话典故改写<br />
       共 {{ all.length }} 则 · 仅供亲子共读参考
     </footer>
   </div>
@@ -384,7 +384,7 @@
 
 <script>
   const { createApp } = Vue;
-  const APP_VERSION = '3';
+  const APP_VERSION = '4';
 
   function randInt(n){
     if(n <= 0) return 0;
