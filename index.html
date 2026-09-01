@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#faf6ee" />
+<title>小故囊 · 成语故事</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+<style>
+  :root{
+    --paper:#faf6ee;
+    --card:#fffdf9;
+    --ink:#2c2a26;
+    --ink-soft:#6f6a60;
+    --ink-faint:#9c968b;
+    --accent:#a8443a;
+    --accent-soft:#c9705f;
+    --line:#e8e1d3;
+    --line-soft:#f2ece0;
+    --mark:#f5efe2;
+    --radius:16px;
+    --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font);
+    font-size:16px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    padding:0 16px calc(32px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+
+  header{padding:20px 0 12px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .brand-mini{font-size:12.5px;letter-spacing:.1em;color:var(--ink-faint);}
+  .toc-open{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 14px;border:1px solid var(--line);border-radius:20px;
+    background:var(--card);color:var(--ink-soft);
+    font-family:var(--font);font-size:13px;letter-spacing:.05em;cursor:pointer;
+  }
+  .toc-open:active{background:var(--mark);}
+  .toc-open .bars{display:inline-block;width:13px;height:10px;position:relative;}
+  .toc-open .bars::before,.toc-open .bars::after,.toc-open .bars i{
+    content:'';position:absolute;left:0;right:0;height:1.6px;background:var(--ink-soft);border-radius:2px;
+  }
+  .toc-open .bars::before{top:0;}
+  .toc-open .bars i{top:4.2px;}
+  .toc-open .bars::after{top:8.4px;}
+
+  .brand{
+    font-size:21px;font-weight:600;letter-spacing:.14em;
+    color:var(--ink);margin:0;text-align:center;
+  }
+  .sub{
+    font-size:12.5px;color:var(--ink-faint);
+    letter-spacing:.06em;margin-top:6px;text-align:center;
+  }
+
+  .search{
+    margin:16px 0 4px;position:relative;
+  }
+  .search input{
+    width:100%;padding:11px 14px 11px 36px;
+    border:1px solid var(--line);border-radius:11px;
+    background:var(--card);color:var(--ink);
+    font-family:var(--font);font-size:14.5px;outline:none;
+    transition:border-color .15s;
+  }
+  .search input:focus{border-color:var(--accent-soft);}
+  .search input::placeholder{color:var(--ink-faint);}
+  .search .ico{
+    position:absolute;left:13px;top:50%;transform:translateY(-50%);
+    width:13px;height:13px;border:1.6px solid var(--ink-faint);
+    border-radius:50%;
+  }
+  .search .ico::after{
+    content:'';position:absolute;right:-5px;bottom:-3px;
+    width:6px;height:1.6px;background:var(--ink-faint);
+    transform:rotate(45deg);
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 22px 22px;
+    margin-top:14px;
+    box-shadow:0 1px 2px rgba(60,50,30,.04);
+  }
+  .head{text-align:center;padding-bottom:16px;border-bottom:1px solid var(--line-soft);}
+  .word{
+    font-size:31px;font-weight:600;letter-spacing:.1em;
+    margin:0;color:var(--ink);line-height:1.35;
+  }
+  .pinyin{
+    font-size:13px;color:var(--accent);
+    letter-spacing:.09em;margin-top:7px;
+  }
+  .cat-chip{
+    display:inline-block;margin-top:11px;padding:3px 11px;
+    font-size:11.5px;letter-spacing:.08em;
+    color:var(--ink-soft);background:var(--mark);
+    border:1px solid var(--line);border-radius:12px;
+  }
+
+  .story{margin:20px 0 4px;}
+  .story p{
+    margin:0 0 15px;
+    font-size:16.5px;line-height:1.95;
+    color:var(--ink);text-align:justify;word-break:break-word;
+    letter-spacing:.02em;
+  }
+  .story p:last-child{margin-bottom:0;}
+
+  .fold{
+    margin-top:20px;padding-top:14px;
+    border-top:1px dashed var(--line);
+  }
+  .fold-btn{
+    display:flex;align-items:center;justify-content:space-between;
+    width:100%;padding:7px 0;background:none;border:none;
+    font-family:var(--font);font-size:13px;
+    color:var(--ink-soft);letter-spacing:.05em;cursor:pointer;
+  }
+  .fold-btn .arrow{
+    font-size:11px;color:var(--ink-faint);
+    transition:transform .2s;
+  }
+  .fold-btn .arrow.open{transform:rotate(90deg);}
+  .quote{
+    margin:6px 0 0;padding:13px 15px;
+    background:var(--mark);border-radius:10px;
+    border-left:3px solid var(--accent-soft);
+  }
+  .quote .q{
+    font-size:14.5px;line-height:1.9;color:var(--ink);
+    letter-spacing:.03em;
+  }
+  .quote .src{
+    display:block;margin-top:8px;
+    font-size:12.5px;color:var(--ink-soft);font-style:normal;
+  }
+
+  .moral{
+    margin-top:16px;padding:14px 16px;
+    background:#fdf6ec;border-radius:11px;
+    border:1px solid #f0e3c8;
+  }
+  .moral .lab{
+    display:block;font-size:11.5px;letter-spacing:.14em;
+    color:var(--accent);margin-bottom:6px;
+  }
+  .moral .txt{font-size:15px;line-height:1.85;color:var(--ink);}
+
+  .nav{display:flex;gap:9px;margin-top:16px;}
+  .nav button{
+    flex:1;padding:12px 0;
+    border:1px solid var(--line);border-radius:11px;
+    background:var(--card);color:var(--ink);
+    font-family:var(--font);font-size:14px;
+    letter-spacing:.05em;cursor:pointer;
+    transition:background .15s,border-color .15s;
+  }
+  .nav button:active{background:var(--mark);}
+  .nav button.primary{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+  }
+  .nav button.primary:active{background:var(--accent-soft);}
+
+  .tools{display:flex;gap:9px;margin-top:9px;justify-content:center;}
+  .tools button{
+    padding:8px 15px;border:none;background:none;
+    font-family:var(--font);font-size:12.5px;
+    color:var(--ink-soft);cursor:pointer;letter-spacing:.05em;
+  }
+  .tools button:active{color:var(--accent);}
+
+  .meta{
+    text-align:center;margin-top:16px;
+    font-size:12px;color:var(--ink-faint);letter-spacing:.05em;
+  }
+  .empty{
+    text-align:center;padding:48px 20px;color:var(--ink-faint);font-size:14px;
+  }
+  .loading{
+    text-align:center;padding:56px 20px;color:var(--ink-faint);font-size:14px;
+  }
+  footer{
+    text-align:center;margin-top:26px;padding-top:16px;
+    border-top:1px solid var(--line-soft);
+    font-size:11.5px;color:var(--ink-faint);line-height:1.9;
+  }
+
+  /* ===== 目录抽屉 ===== */
+  .overlay{
+    position:fixed;inset:0;background:rgba(40,34,26,.42);
+    z-index:40;
+  }
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:50;
+    max-height:84vh;display:flex;flex-direction:column;
+    background:var(--paper);
+    border-top-left-radius:20px;border-top-right-radius:20px;
+    box-shadow:0 -6px 24px rgba(40,34,26,.18);
+    transform:translateY(100%);
+    transition:transform .26s ease;
+  }
+  .sheet.open{transform:translateY(0);}
+  .sheet-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 18px 10px;
+  }
+  .sheet-head span{font-size:15px;font-weight:600;letter-spacing:.06em;color:var(--ink);}
+  .sheet-close{
+    border:none;background:none;color:var(--accent-soft);
+    font-family:var(--font);font-size:13.5px;cursor:pointer;padding:4px 6px;
+  }
+  .seg{
+    display:flex;gap:8px;padding:0 18px 10px;
+  }
+  .seg button{
+    flex:1;padding:8px 0;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);color:var(--ink-soft);
+    font-family:var(--font);font-size:13px;letter-spacing:.05em;cursor:pointer;
+  }
+  .seg button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .toc-search{position:relative;padding:0 18px 12px;}
+  .toc-search input{
+    width:100%;padding:10px 12px 10px 34px;
+    border:1px solid var(--line);border-radius:10px;
+    background:var(--card);color:var(--ink);
+    font-family:var(--font);font-size:14px;outline:none;
+  }
+  .toc-search input:focus{border-color:var(--accent-soft);}
+  .toc-search .ico{
+    position:absolute;left:28px;top:50%;transform:translateY(-50%);
+    width:12px;height:12px;border:1.6px solid var(--ink-faint);border-radius:50%;
+  }
+  .toc-search .ico::after{
+    content:'';position:absolute;right:-4px;bottom:-3px;
+    width:5px;height:1.6px;background:var(--ink-faint);transform:rotate(45deg);
+  }
+  .toc-list{
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:0 12px calc(20px + env(safe-area-inset-bottom));
+  }
+  .toc-group-h{
+    position:sticky;top:0;background:var(--paper);
+    padding:12px 8px 6px;font-size:12px;font-weight:600;
+    letter-spacing:.1em;color:var(--accent);
+  }
+  .toc-item{
+    display:flex;align-items:center;gap:10px;width:100%;
+    padding:11px 12px;border:none;border-radius:10px;
+    background:none;cursor:pointer;text-align:left;
+    font-family:var(--font);
+  }
+  .toc-item:active{background:var(--mark);}
+  .toc-item.cur{background:var(--mark);}
+  .toc-item.cur .toc-word{color:var(--accent);}
+  .toc-word{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:.06em;min-width:64px;}
+  .toc-pinyin{font-size:12px;color:var(--ink-faint);flex:1;}
+  .toc-cat{
+    font-size:11px;color:var(--ink-soft);
+    background:var(--card);border:1px solid var(--line);
+    padding:2px 8px;border-radius:10px;white-space:nowrap;
+  }
+
+  @media (max-width:400px){
+    .word{font-size:27px;}
+    .story p{font-size:16px;}
+    .card{padding:22px 17px 18px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="wrap">
+    <header>
+      <div class="topbar">
+        <span class="brand-mini">亲子共读</span>
+        <button class="toc-open" @click="openToc">
+          <span class="bars"><i></i></span> 目录 {{ all.length }} 则
+        </button>
+      </div>
+      <h1 class="brand">小故囊</h1>
+      <div class="sub">成语故事 · 共 {{ all.length }} 则</div>
+      <div class="search">
+        <span class="ico"></span>
+        <input v-model="query" type="search" placeholder="搜成语或拼音" />
+      </div>
+    </header>
+
+    <div v-if="!loaded" class="loading">正在加载故事…</div>
+
+    <div v-else-if="!view.length" class="empty">没有找到相关的成语</div>
+
+    <template v-else>
+      <article class="card" :key="current.id">
+        <div class="head">
+          <h2 class="word">{{ current.word }}</h2>
+          <div class="pinyin">{{ current.pinyin }}</div>
+          <span class="cat-chip">{{ catOf(current.source) }}</span>
+        </div>
+
+        <div class="story">
+          <p v-for="(p,i) in paras" :key="i">{{ p }}</p>
+        </div>
+
+        <div class="fold">
+          <button class="fold-btn" @click="showQuote = !showQuote">
+            <span>出自古籍原文</span>
+            <span :class="['arrow', {open: showQuote}]">▶</span>
+          </button>
+          <blockquote v-if="showQuote" class="quote">
+            <span class="q">{{ current.quote }}</span>
+            <cite class="src">—— {{ current.source }}</cite>
+          </blockquote>
+        </div>
+
+        <div v-if="showMoral" class="moral">
+          <span class="lab">讲个道理</span>
+          <span class="txt">{{ current.moral }}</span>
+        </div>
+      </article>
+
+      <nav class="nav">
+        <button @click="prev">上一则</button>
+        <button class="primary" @click="shuffle">换一则</button>
+        <button @click="next">下一则</button>
+      </nav>
+
+      <div class="tools">
+        <button @click="showMoral = !showMoral">
+          {{ showMoral ? '藏起道理' : '讲讲道理' }}
+        </button>
+      </div>
+
+      <div class="meta">第 {{ idx + 1 }} 则 / 共 {{ view.length }} 则</div>
+    </template>
+
+    <footer>
+      故事依据《诗经》《史记》《战国策》《庄子》《论语》等公版古籍原文改写<br />
+      共 {{ all.length }} 则 · 仅供亲子共读参考
+    </footer>
+  </div>
+
+  <!-- 目录抽屉 -->
+  <div class="overlay" v-if="showToc" @click="closeToc"></div>
+  <div class="sheet" :class="{open: showToc}">
+    <div class="sheet-head">
+      <span>目录</span>
+      <button class="sheet-close" @click="closeToc">收起</button>
+    </div>
+    <div class="seg">
+      <button :class="{on: tocMode==='pinyin'}" @click="tocMode='pinyin'">按拼音</button>
+      <button :class="{on: tocMode==='cat'}" @click="tocMode='cat'">按出处</button>
+    </div>
+    <div class="toc-search">
+      <span class="ico"></span>
+      <input v-model="tocQuery" type="search" placeholder="在目录里找" />
+    </div>
+    <div class="toc-list">
+      <template v-for="g in tocGroups" :key="g.key">
+        <div class="toc-group-h">{{ g.key }}</div>
+        <button v-for="it in g.items" :key="it.word"
+                class="toc-item" :class="{cur: it.word===current.word}"
+                @click="jumpTo(it.word)">
+          <span class="toc-word">{{ it.word }}</span>
+          <span class="toc-pinyin">{{ it.pinyin }}</span>
+          <span class="toc-cat">{{ it.cat }}</span>
+        </button>
+      </template>
+      <div v-if="!tocGroups.length" class="empty">目录里没有匹配的</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createApp } = Vue;
+  const APP_VERSION = '3';
+
+  function randInt(n){
+    if(n <= 0) return 0;
+    const arr = new Uint32Array(1);
+    if(window.crypto && window.crypto.getRandomValues){
+      window.crypto.getRandomValues(arr);
+      return arr[0] % n;
+    }
+    return Math.floor(Math.random() * n);
+  }
+
+  // 出处五大类：经部 / 史部 / 子部 / 集部 / 笔记佛典（数据可推导，不改故事文本）
+  function catOf(src){
+    const s = src || '';
+    if(/诗经|书经|礼记|论语|孟子|左传|易|中庸|大学|孝经|公羊|穀梁|仪礼/.test(s)) return '经部';
+    if(/史记|汉书|后汉书|晋书|三国志|东观汉记|战国策|资治通鉴|汉纪|国语|竹书/.test(s)) return '史部';
+    if(/庄子|韩非子|列子|吕氏春秋|淮南子|管子|尹文子|荀子|老子|墨子|晏子|文子|慎子|商君|孙子|尉缭子|鬼谷子/.test(s)) return '子部';
+    if(/唐诗|宋词|柳宗元|陶潜|苏轼|欧阳修|沈既济|王嘉|世说新语|刘义庆|习凿齿|羊欣|诸葛亮|左思|三戒|桃花源|枕中记|王氏伯仲|文与可|方舆胜览|过庭录|归田录|笔阵图/.test(s)) return '集部';
+    if(/山海经|风俗通义|说苑|新语|拾遗记|弘明集|碧岩录|法苑|高僧传|神仙传/.test(s)) return '笔记佛典';
+    return '其他';
+  }
+
+  createApp({
+    data(){
+      return {
+        loaded:false,
+        all:[],
+        query:'',
+        idx:0,
+        showQuote:false,
+        showMoral:false,
+        showToc:false,
+        tocMode:'pinyin',
+        tocQuery:'',
+      };
+    },
+    computed:{
+      view(){
+        const q = this.query.trim().toLowerCase();
+        if(!q) return this.all;
+        return this.all.filter(s =>
+          s.word.includes(q) ||
+          s.pinyin.toLowerCase().replace(/\s/g,'').includes(q.replace(/\s/g,''))
+        );
+      },
+      current(){
+        return this.view[this.idx] || null;
+      },
+      paras(){
+        if(!this.current) return [];
+        return this.current.story.split(/\n+/).map(s => s.trim()).filter(Boolean);
+      },
+      tocGroups(){
+        const q = this.tocQuery.trim().toLowerCase();
+        let list = this.all;
+        if(q){
+          list = list.filter(s =>
+            s.word.includes(q) ||
+            s.pinyin.toLowerCase().replace(/\s/g,'').includes(q.replace(/\s/g,''))
+          );
+        }
+        const map = {};
+        for(const s of list){
+          const key = this.tocMode === 'pinyin'
+            ? (() => {
+                const f = (s.pinyin.trim()[0] || '?').normalize('NFD');
+                let k = '';
+                for (const ch of f) {
+                  const cp = ch.codePointAt(0);
+                  if (cp < 0x0300 || cp > 0x036F) k += ch;
+                }
+                return k.toUpperCase();
+              })()
+            : catOf(s.source);
+          (map[key] = map[key] || []).push({
+            word: s.word,
+            pinyin: s.pinyin,
+            cat: catOf(s.source),
+          });
+        }
+        let keys = Object.keys(map);
+        if(this.tocMode === 'pinyin'){
+          keys.sort();
+        }else{
+          const order = {'经部':0,'史部':1,'子部':2,'集部':3,'笔记佛典':4,'其他':5};
+          keys.sort((a,b) => (order[a] ?? 9) - (order[b] ?? 9));
+        }
+        return keys.map(k => ({ key:k, items:map[k] }));
+      },
+    },
+    watch:{
+      query(){ this.idx = 0; },
+      current(){ this.showQuote = false; },
+    },
+    methods:{
+      catOf,
+      shuffle(){ if(this.view.length) this.idx = randInt(this.view.length); },
+      prev(){
+        const n = this.view.length;
+        if(n) this.idx = (this.idx - 1 + n) % n;
+      },
+      next(){
+        const n = this.view.length;
+        if(n) this.idx = (this.idx + 1) % n;
+      },
+      openToc(){ this.tocQuery = ''; this.showToc = true; },
+      closeToc(){ this.showToc = false; },
+      jumpTo(word){
+        this.tocQuery = '';
+        this.query = '';
+        const i = this.all.findIndex(s => s.word === word);
+        if(i >= 0) this.idx = i;
+        this.showToc = false;
+      },
+      async load(){
+        try{
+          const res = await fetch('stories.json?v=' + APP_VERSION);
+          this.all = await res.json();
+        }catch(e){
+          this.all = [];
+        }
+        this.loaded = true;
+        this.idx = randInt(this.all.length);
+      },
+    },
+    mounted(){ this.load(); },
+  }).mount('#app');
+</script>
+
+  <script>
+    // ===== Service Worker 注册（微信内禁用，避免缓存陷阱）=====
+    // 非微信浏览器注册「透明穿透版」sw.js（不缓存任何资源），
+    // 由 sw.js 在激活时强制刷新所有已打开页面，从根上解决「升级后仍显示旧版」。
+    if('serviceWorker' in navigator && !/MicroMessenger/i.test(navigator.userAgent)){
+      window.addEventListener('load', ()=>{
+        navigator.serviceWorker.register('sw.js').catch(()=>{});
+      });
+    }
+  </script>
+</body>
+</html>

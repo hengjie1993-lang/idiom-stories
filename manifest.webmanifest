@@ -1,0 +1,11 @@
+{
+  "name": "小故囊 · 成语故事",
+  "short_name": "小故囊",
+  "description": "100 则成语典故，白话改写，亲子共读。小故囊是小诗囊的姊妹篇。",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#faf6ee",
+  "theme_color": "#faf6ee",
+  "lang": "zh-CN",
+  "icons": []
+}
