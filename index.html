@@ -236,7 +236,7 @@
           </div>
         </div>
 
-        <blockquote class="quote" v-if="current.quote">
+        <blockquote class="quote" v-if="showQuote && current.quote">
           <span class="q">{{ current.quote }}</span>
           <cite class="src">—— {{ current.source }}</cite>
         </blockquote>
@@ -256,6 +256,7 @@
         <button :class="{on: fontSize==='m'}" @click="fontSize='m'">中</button>
         <button :class="{on: fontSize==='l'}" @click="fontSize='l'">大</button>
         <button :class="{on: showPinyin}" @click="showPinyin=!showPinyin">{{ showPinyin ? '隐拼音' : '显拼音' }}</button>
+        <button :class="{on: showQuote}" @click="showQuote=!showQuote">{{ showQuote ? '隐原文' : '显原文' }}</button>
         <button :class="{on: dark}" @click="toggleDark">{{ dark ? '日间' : '夜读' }}</button>
         <button :class="{on: isFav}" @click="toggleFav">{{ isFav ? '已藏' : '收藏' }}</button>
         <button @click="shareCard">分享卡</button>
@@ -321,7 +322,7 @@
 
 <script>
   const { createApp } = Vue;
-  const APP_VERSION = '10';
+  const APP_VERSION = '11';
 
   function randInt(n){
     if(n <= 0) return 0;
@@ -361,7 +362,7 @@
         theme:'全部',
         themes:THEMES,
         idx:0,
-        showQuote:true,
+        showQuote:false,
         showMoral:false,
         showToc:false,
         tocMode:'pinyin',
@@ -444,7 +445,7 @@
       favs(){
         try { localStorage.setItem('idiom_favs', JSON.stringify(this.favs)); } catch(e){}
       },
-      current(){ this.showQuote = true; },
+      current(){ this.showQuote = false; },
       dark(v){ document.documentElement.setAttribute('data-theme', v ? 'dark' : 'light'); },
     },
     methods:{
@@ -495,34 +496,41 @@
         x.fillStyle = '#5b8c6e';
         x.font = '400 30px sans-serif';
         x.fillText(tags, 540, 460);
-        x.fillStyle = '#2b2620';
-        x.font = '400 40px "Songti SC","SimSun",serif';
-        let y = 560;
-        y = this._wrap(x, this.current.quote, 110, 1240, y, 64);
-        x.fillStyle = '#6b6052';
-        x.font = '400 32px sans-serif';
-        x.fillText('—— ' + this.current.source, 540, y + 30);
-        y = y + 90;
+        x.strokeStyle = '#e3d9c4'; x.lineWidth = 2;
+        x.beginPath(); x.moveTo(120, 520); x.lineTo(960, 520); x.stroke();
+        let y = 580;
         x.fillStyle = '#b5341f';
         x.font = '600 30px sans-serif';
         x.textAlign = 'left';
-        x.fillText('讲个道理', 110, y);
-        y += 50;
+        x.fillText('讲个道理', 120, y);
+        y += 54;
         x.fillStyle = '#2b2620';
-        x.font = '400 38px "Songti SC","SimSun",serif';
-        y = this._wrap(x, this.current.moral, 110, 1240, y, 60);
+        x.font = '400 40px "Songti SC","SimSun",serif';
+        y = this._wrap(x, this.current.moral, 120, 960, y, 64, 12);
+        x.textAlign = 'center';
+        x.fillStyle = '#9a8f7a';
+        x.font = '400 24px sans-serif';
+        x.fillText('—— ' + (this.current.source || '成语小书') + ' ——', 540, 1360);
         this.shareImg = c.toDataURL('image/png');
         this.showShare = true;
       },
-      _wrap(ctx, text, x, x2, y, lh){
+      _wrap(ctx, text, x, x2, y, lh, maxLines = 999){
         const max = x2 - x;
+        const lines = [];
         let line = '';
         for(const ch of (text || '')){
           if(ctx.measureText(line + ch).width > max && line){
-            ctx.fillText(line, x, y); line = ch; y += lh;
+            lines.push(line); line = ch;
+            if(lines.length >= maxLines) break;
           } else { line += ch; }
         }
-        if(line) { ctx.fillText(line, x, y); y += lh; }
+        if(line && lines.length < maxLines) lines.push(line);
+        if(lines.length >= maxLines && line){
+          let last = lines[lines.length-1];
+          while(last.length && ctx.measureText(last + '……').width > max) last = last.slice(0,-1);
+          lines[lines.length-1] = last + '……';
+        }
+        for(const ln of lines){ ctx.fillText(ln, x, y); y += lh; }
         return y;
       },
       async load(){
