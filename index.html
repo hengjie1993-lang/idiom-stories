@@ -336,7 +336,7 @@
 
 <script>
   const { createApp } = Vue;
-  const APP_VERSION = '14';
+  const APP_VERSION = '15';
 
   function randInt(n){
     if(n <= 0) return 0;
@@ -538,11 +538,13 @@
         x.textAlign = 'left';
         x.fillStyle = '#b5341f';
         x.font = '600 32px sans-serif';
-        x.fillText('讲个道理', 140, y);
+        x.fillText('小故事', 140, y);
         y += 56;
         x.fillStyle = '#2b2620';
         x.font = '400 40px "Songti SC","SimSun",serif';
-        y = this._wrap(x, s.moral, 140, 940, y, 64, 8);
+        let body = (s.story || '').replace(/\n+/g, '');
+        if(body.length > 100) body = body.slice(0, 100) + '……';
+        y = this._wrap(x, body, 140, 940, y, 64, 8);
 
         const qrSize = 220, qrX = 1080 - 64 - qrSize - 24, qrY = 1120;
         x.textAlign = 'left';
