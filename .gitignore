@@ -1,0 +1,3 @@
+# 备份与中间产物（不入库）
+stories_backup_*.json
+_cydata/
