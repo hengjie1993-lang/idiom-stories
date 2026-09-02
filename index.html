@@ -3,278 +3,196 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#faf6ee" />
+<meta name="theme-color" content="#f7f1e3" />
 <title>成语小书</title>
 <link rel="manifest" href="manifest.webmanifest" />
 <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
 <style>
   :root{
-    --paper:#faf6ee;
-    --card:#fffdf9;
-    --ink:#2c2a26;
-    --ink-soft:#6f6a60;
-    --ink-faint:#9c968b;
-    --accent:#a8443a;
+    /* 新中式 · 宣纸米黄 */
+    --paper:#f7f1e3;
+    --paper-2:#efe6d3;
+    --card:#fffdf8;
+    --ink:#2b2620;
+    --ink-soft:#6b6052;
+    --ink-faint:#9a8f7a;
+    --accent:#b5341f;      /* 朱砂 */
     --accent-soft:#c9705f;
-    --line:#e8e1d3;
-    --line-soft:#f2ece0;
-    --mark:#f5efe2;
+    --jade:#5b8c6e;        /* 竹青 */
+    --indigo:#3a5a78;      /* 黛蓝 */
+    --line:#e3d9c4;
+    --line-soft:#f0e8d8;
+    --mark:#f5ecd9;
     --radius:16px;
-    --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --serif:"Songti SC","STSong","SimSun","Noto Serif SC",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  [data-theme="dark"]{
+    --paper:#1c1a17;
+    --paper-2:#26231e;
+    --card:#2a2620;
+    --ink:#ece4d4;
+    --ink-soft:#b3a892;
+    --ink-faint:#7d745f;
+    --accent:#e07a5f;
+    --accent-soft:#c9705f;
+    --jade:#7fb093;
+    --indigo:#7fa6c4;
+    --line:#3a352c;
+    --line-soft:#322d25;
+    --mark:#332e25;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
   body{
     background:var(--paper);
     color:var(--ink);
-    font-family:var(--font);
-    font-size:16px;
-    line-height:1.7;
+    font-family:var(--sans);
+    font-size:16px;line-height:1.7;
     -webkit-font-smoothing:antialiased;
-    padding:0 16px calc(32px + env(safe-area-inset-bottom));
+    padding:0 16px calc(28px + env(safe-area-inset-bottom));
+    transition:background .25s,color .25s;
   }
   .wrap{max-width:640px;margin:0 auto;}
 
-  header{padding:20px 0 12px;}
-  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .brand-mini{font-size:12.5px;letter-spacing:.1em;color:var(--ink-faint);}
+  header{padding:18px 0 6px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .brandbox{display:flex;align-items:center;gap:11px;}
+  .seal{
+    width:40px;height:40px;flex:none;
+    background:var(--accent);border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-family:var(--serif);font-size:22px;font-weight:700;
+    box-shadow:0 2px 6px rgba(181,52,31,.25);
+  }
+  .brand{font-family:var(--serif);font-size:21px;font-weight:700;letter-spacing:.12em;color:var(--ink);line-height:1.1;}
+  .brand-mini{font-size:11.5px;letter-spacing:.08em;color:var(--ink-faint);margin-top:3px;}
   .toc-open{
-    display:inline-flex;align-items:center;gap:6px;
-    padding:7px 14px;border:1px solid var(--line);border-radius:20px;
+    padding:7px 15px;border:1px solid var(--line);border-radius:20px;
     background:var(--card);color:var(--ink-soft);
-    font-family:var(--font);font-size:13px;letter-spacing:.05em;cursor:pointer;
+    font-family:var(--sans);font-size:13px;letter-spacing:.05em;cursor:pointer;
   }
   .toc-open:active{background:var(--mark);}
-  .toc-open .bars{display:inline-block;width:13px;height:10px;position:relative;}
-  .toc-open .bars::before,.toc-open .bars::after,.toc-open .bars i{
-    content:'';position:absolute;left:0;right:0;height:1.6px;background:var(--ink-soft);border-radius:2px;
-  }
-  .toc-open .bars::before{top:0;}
-  .toc-open .bars i{top:4.2px;}
-  .toc-open .bars::after{top:8.4px;}
 
-  .brand{
-    font-size:21px;font-weight:600;letter-spacing:.14em;
-    color:var(--ink);margin:0;text-align:center;
-  }
-  .sub{
-    font-size:12.5px;color:var(--ink-faint);
-    letter-spacing:.06em;margin-top:6px;text-align:center;
-  }
-
-  .search{
-    margin:16px 0 4px;position:relative;
-  }
+  .search{position:relative;margin:10px 0 4px;}
   .search input{
-    width:100%;padding:11px 14px 11px 36px;
-    border:1px solid var(--line);border-radius:11px;
+    width:100%;padding:12px 14px 12px 38px;
+    border:1px solid var(--line);border-radius:12px;
     background:var(--card);color:var(--ink);
-    font-family:var(--font);font-size:14.5px;outline:none;
-    transition:border-color .15s;
+    font-family:var(--sans);font-size:15px;outline:none;transition:border-color .15s;
   }
   .search input:focus{border-color:var(--accent-soft);}
   .search input::placeholder{color:var(--ink-faint);}
   .search .ico{
-    position:absolute;left:13px;top:50%;transform:translateY(-50%);
-    width:13px;height:13px;border:1.6px solid var(--ink-faint);
-    border-radius:50%;
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    width:14px;height:14px;border:1.7px solid var(--ink-faint);border-radius:50%;
   }
   .search .ico::after{
     content:'';position:absolute;right:-5px;bottom:-3px;
-    width:6px;height:1.6px;background:var(--ink-faint);
-    transform:rotate(45deg);
+    width:6px;height:1.7px;background:var(--ink-faint);transform:rotate(45deg);
   }
+
+  .themes{display:flex;gap:7px;overflow-x:auto;padding:4px 1px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .themes::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:none;padding:6px 13px;border:1px solid var(--line);border-radius:999px;
+    background:var(--card);color:var(--ink-soft);
+    font-family:var(--sans);font-size:12.5px;letter-spacing:.04em;cursor:pointer;white-space:nowrap;
+    transition:all .15s;
+  }
+  .chip:active{background:var(--mark);}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
 
   .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:26px 22px 22px;
-    margin-top:14px;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 22px 22px;margin-top:12px;
     box-shadow:0 1px 2px rgba(60,50,30,.04);
+    animation:fade .26s ease;
   }
-  .head{text-align:center;padding-bottom:16px;border-bottom:1px solid var(--line-soft);}
-  .word{
-    font-size:31px;font-weight:600;letter-spacing:.1em;
-    margin:0;color:var(--ink);line-height:1.35;
-  }
-  .pinyin{
-    font-size:13px;color:var(--accent);
-    letter-spacing:.09em;margin-top:7px;
-  }
-  .cat-chip{
-    display:inline-block;margin-top:11px;padding:3px 11px;
-    font-size:11.5px;letter-spacing:.08em;
-    color:var(--ink-soft);background:var(--mark);
-    border:1px solid var(--line);border-radius:12px;
-  }
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  .head{text-align:center;padding-bottom:14px;border-bottom:1px solid var(--line-soft);}
+  .word{font-family:var(--serif);font-size:31px;font-weight:700;letter-spacing:.1em;margin:0;color:var(--ink);line-height:1.35;}
+  .pinyin{font-size:13px;color:var(--accent);letter-spacing:.09em;margin-top:7px;}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px;}
+  .tag{font-size:11px;color:var(--jade);background:var(--mark);border-radius:10px;padding:2px 9px;letter-spacing:.05em;}
 
-  .story{margin:20px 0 4px;}
-  .story p{
-    margin:0 0 15px;
-    font-size:16.5px;line-height:1.95;
-    color:var(--ink);text-align:justify;word-break:break-word;
-    letter-spacing:.02em;
-  }
-  .story p:last-child{margin-bottom:0;}
-
-  .fold{
-    margin-top:20px;padding-top:14px;
-    border-top:1px dashed var(--line);
-  }
-  .fold-btn{
-    display:flex;align-items:center;justify-content:space-between;
-    width:100%;padding:7px 0;background:none;border:none;
-    font-family:var(--font);font-size:13px;
-    color:var(--ink-soft);letter-spacing:.05em;cursor:pointer;
-  }
-  .fold-btn .arrow{
-    font-size:11px;color:var(--ink-faint);
-    transition:transform .2s;
-  }
-  .fold-btn .arrow.open{transform:rotate(90deg);}
   .quote{
-    margin:6px 0 0;padding:13px 15px;
-    background:var(--mark);border-radius:10px;
-    border-left:3px solid var(--accent-soft);
+    margin:18px 0 4px;padding:14px 16px;
+    background:var(--mark);border-radius:11px;border-left:3px solid var(--accent-soft);
   }
-  .quote .q{
-    font-size:14.5px;line-height:1.9;color:var(--ink);
-    letter-spacing:.03em;
-  }
-  .quote .src{
-    display:block;margin-top:8px;
-    font-size:12.5px;color:var(--ink-soft);font-style:normal;
-  }
+  .quote .q{display:block;font-family:var(--serif);font-size:15px;line-height:1.95;color:var(--ink);letter-spacing:.03em;}
+  .quote .src{display:block;margin-top:8px;font-size:12px;color:var(--ink-soft);font-style:normal;}
 
-  .moral{
-    margin-top:16px;padding:14px 16px;
-    background:#fdf6ec;border-radius:11px;
-    border:1px solid #f0e3c8;
-  }
-  .moral .lab{
-    display:block;font-size:11.5px;letter-spacing:.14em;
-    color:var(--accent);margin-bottom:6px;
-  }
+  .story{margin:18px 0 4px;}
+  .story p{margin:0 0 15px;font-size:16.5px;line-height:1.95;color:var(--ink);text-align:justify;word-break:break-word;letter-spacing:.02em;}
+  .story p:last-child{margin-bottom:0;}
+  .fs-s .story p{font-size:15px;line-height:1.85;}
+  .fs-l .story p{font-size:18.5px;line-height:2.05;}
+
+  .moral{margin-top:16px;padding:14px 16px;background:var(--paper-2);border-radius:11px;border:1px solid var(--line);}
+  .moral .lab{display:block;font-size:11.5px;letter-spacing:.14em;color:var(--accent);margin-bottom:6px;}
   .moral .txt{font-size:15px;line-height:1.85;color:var(--ink);}
 
-  .nav{display:flex;gap:9px;margin-top:16px;}
+  .controls{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:16px;}
+  .controls button{
+    padding:8px 13px;border:1px solid var(--line);border-radius:11px;
+    background:var(--card);color:var(--ink-soft);
+    font-family:var(--sans);font-size:12.5px;letter-spacing:.04em;cursor:pointer;transition:all .15s;
+  }
+  .controls button:active{background:var(--mark);}
+  .controls button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .nav{display:flex;gap:9px;margin-top:12px;}
   .nav button{
-    flex:1;padding:12px 0;
-    border:1px solid var(--line);border-radius:11px;
+    flex:1;padding:12px 0;border:1px solid var(--line);border-radius:11px;
     background:var(--card);color:var(--ink);
-    font-family:var(--font);font-size:14px;
-    letter-spacing:.05em;cursor:pointer;
-    transition:background .15s,border-color .15s;
+    font-family:var(--sans);font-size:14px;letter-spacing:.05em;cursor:pointer;transition:background .15s,border-color .15s;
   }
   .nav button:active{background:var(--mark);}
-  .nav button.primary{
-    background:var(--accent);border-color:var(--accent);color:#fff;
-  }
+  .nav button.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
   .nav button.primary:active{background:var(--accent-soft);}
 
-  .tools{display:flex;gap:9px;margin-top:9px;justify-content:center;}
-  .tools button{
-    padding:8px 15px;border:none;background:none;
-    font-family:var(--font);font-size:12.5px;
-    color:var(--ink-soft);cursor:pointer;letter-spacing:.05em;
-  }
-  .tools button:active{color:var(--accent);}
+  .meta{text-align:center;margin-top:14px;font-size:12px;color:var(--ink-faint);letter-spacing:.05em;}
+  .empty{text-align:center;padding:48px 20px;color:var(--ink-faint);font-size:14px;}
+  .loading{text-align:center;padding:56px 20px;color:var(--ink-faint);font-size:14px;}
+  footer{text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid var(--line-soft);font-size:11.5px;color:var(--ink-faint);line-height:1.9;}
 
-  .meta{
-    text-align:center;margin-top:16px;
-    font-size:12px;color:var(--ink-faint);letter-spacing:.05em;
-  }
-  .empty{
-    text-align:center;padding:48px 20px;color:var(--ink-faint);font-size:14px;
-  }
-  .loading{
-    text-align:center;padding:56px 20px;color:var(--ink-faint);font-size:14px;
-  }
-  footer{
-    text-align:center;margin-top:26px;padding-top:16px;
-    border-top:1px solid var(--line-soft);
-    font-size:11.5px;color:var(--ink-faint);line-height:1.9;
-  }
-
-  /* ===== 目录抽屉 ===== */
-  .overlay{
-    position:fixed;inset:0;background:rgba(40,34,26,.42);
-    z-index:40;
-  }
-  .sheet{
-    position:fixed;left:0;right:0;bottom:0;z-index:50;
-    max-height:84vh;display:flex;flex-direction:column;
-    background:var(--paper);
-    border-top-left-radius:20px;border-top-right-radius:20px;
-    box-shadow:0 -6px 24px rgba(40,34,26,.18);
-    transform:translateY(100%);
-    transition:transform .26s ease;
-  }
+  /* 目录抽屉 */
+  .overlay{position:fixed;inset:0;background:rgba(40,34,26,.42);z-index:40;}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;max-height:86vh;display:flex;flex-direction:column;background:var(--paper);border-top-left-radius:20px;border-top-right-radius:20px;box-shadow:0 -6px 24px rgba(40,34,26,.18);transform:translateY(100%);transition:transform .26s ease;}
   .sheet.open{transform:translateY(0);}
-  .sheet-head{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:16px 18px 10px;
-  }
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px;}
   .sheet-head span{font-size:15px;font-weight:600;letter-spacing:.06em;color:var(--ink);}
-  .sheet-close{
-    border:none;background:none;color:var(--accent-soft);
-    font-family:var(--font);font-size:13.5px;cursor:pointer;padding:4px 6px;
-  }
-  .seg{
-    display:flex;gap:8px;padding:0 18px 10px;
-  }
-  .seg button{
-    flex:1;padding:8px 0;border:1px solid var(--line);border-radius:10px;
-    background:var(--card);color:var(--ink-soft);
-    font-family:var(--font);font-size:13px;letter-spacing:.05em;cursor:pointer;
-  }
+  .sheet-close{border:none;background:none;color:var(--accent-soft);font-family:var(--sans);font-size:13.5px;cursor:pointer;padding:4px 6px;}
+  .seg{display:flex;gap:8px;padding:0 18px 10px;}
+  .seg button{flex:1;padding:8px 0;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink-soft);font-family:var(--sans);font-size:13px;letter-spacing:.05em;cursor:pointer;}
   .seg button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
   .toc-search{position:relative;padding:0 18px 12px;}
-  .toc-search input{
-    width:100%;padding:10px 12px 10px 34px;
-    border:1px solid var(--line);border-radius:10px;
-    background:var(--card);color:var(--ink);
-    font-family:var(--font);font-size:14px;outline:none;
-  }
-  .toc-search input:focus{border-color:var(--accent-soft);}
-  .toc-search .ico{
-    position:absolute;left:28px;top:50%;transform:translateY(-50%);
-    width:12px;height:12px;border:1.6px solid var(--ink-faint);border-radius:50%;
-  }
-  .toc-search .ico::after{
-    content:'';position:absolute;right:-4px;bottom:-3px;
-    width:5px;height:1.6px;background:var(--ink-faint);transform:rotate(45deg);
-  }
-  .toc-list{
-    overflow-y:auto;-webkit-overflow-scrolling:touch;
-    padding:0 12px calc(20px + env(safe-area-inset-bottom));
-  }
-  .toc-group-h{
-    position:sticky;top:0;background:var(--paper);
-    padding:12px 8px 6px;font-size:12px;font-weight:600;
-    letter-spacing:.1em;color:var(--accent);
-  }
-  .toc-item{
-    display:flex;align-items:center;gap:10px;width:100%;
-    padding:11px 12px;border:none;border-radius:10px;
-    background:none;cursor:pointer;text-align:left;
-    font-family:var(--font);
-  }
+  .toc-search input{width:100%;padding:10px 12px 10px 34px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-family:var(--sans);font-size:14px;outline:none;}
+  .toc-search .ico{position:absolute;left:28px;top:50%;transform:translateY(-50%);width:12px;height:12px;border:1.7px solid var(--ink-faint);border-radius:50%;}
+  .toc-search .ico::after{content:'';position:absolute;right:-4px;bottom:-3px;width:5px;height:1.7px;background:var(--ink-faint);transform:rotate(45deg);}
+  .toc-list{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 12px calc(20px + env(safe-area-inset-bottom));}
+  .toc-group-h{position:sticky;top:0;background:var(--paper);padding:12px 8px 6px;font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--accent);}
+  .toc-item{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:none;border-radius:10px;background:none;cursor:pointer;text-align:left;font-family:var(--sans);}
   .toc-item:active{background:var(--mark);}
   .toc-item.cur{background:var(--mark);}
   .toc-item.cur .toc-word{color:var(--accent);}
   .toc-word{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:.06em;min-width:64px;}
   .toc-pinyin{font-size:12px;color:var(--ink-faint);flex:1;}
-  .toc-cat{
-    font-size:11px;color:var(--ink-soft);
-    background:var(--card);border:1px solid var(--line);
-    padding:2px 8px;border-radius:10px;white-space:nowrap;
-  }
+  .toc-cat{font-size:11px;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);padding:2px 8px;border-radius:10px;white-space:nowrap;}
+
+  /* 分享卡 */
+  .share-sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;max-height:90vh;display:flex;flex-direction:column;align-items:center;background:var(--paper);border-top-left-radius:20px;border-top-right-radius:20px;box-shadow:0 -6px 24px rgba(40,34,26,.18);padding:18px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .26s ease;}
+  .share-sheet.open{transform:translateY(0);}
+  .share-img{width:100%;max-width:300px;border-radius:12px;box-shadow:0 4px 16px rgba(40,34,26,.2);}
+  .share-actions{display:flex;gap:10px;margin-top:14px;width:100%;max-width:300px;}
+  .share-actions .btn{flex:1;text-align:center;padding:11px 0;border-radius:11px;font-size:14px;letter-spacing:.05em;text-decoration:none;cursor:pointer;}
+  .share-actions .btn.solid{background:var(--accent);color:#fff;border:1px solid var(--accent);}
+  .share-actions .btn.ghost{background:var(--card);color:var(--ink-soft);border:1px solid var(--line);}
+  .share-hint{margin-top:10px;font-size:11.5px;color:var(--ink-faint);}
 
   @media (max-width:400px){
     .word{font-size:27px;}
-    .story p{font-size:16px;}
     .card{padding:22px 17px 18px;}
   }
 </style>
@@ -284,63 +202,70 @@
   <div class="wrap">
     <header>
       <div class="topbar">
-        <span class="brand-mini">随手翻读</span>
-        <button class="toc-open" @click="openToc">
-          <span class="bars"><i></i></span> 目录 {{ all.length }} 则
-        </button>
+        <div class="brandbox">
+          <span class="seal">書</span>
+          <div>
+            <div class="brand">成语小书</div>
+            <div class="brand-mini">随手翻读 · 共 {{ all.length }} 则</div>
+          </div>
+        </div>
+        <button class="toc-open" @click="openToc">目录 {{ all.length }} 则</button>
       </div>
-      <h1 class="brand">成语小书</h1>
-      <div class="sub">成语故事 · 共 {{ all.length }} 则</div>
+
       <div class="search">
         <span class="ico"></span>
-        <input v-model="query" type="search" placeholder="搜成语或拼音" />
+        <input v-model="query" type="search" placeholder="搜成语 / 拼音 / 首字母（如 hldj）" />
+      </div>
+
+      <div class="themes">
+        <button v-for="t in themes" :key="t" :class="['chip',{on: theme===t}]" @click="theme=t">{{ t }}</button>
       </div>
     </header>
 
     <div v-if="!loaded" class="loading">正在加载故事…</div>
-
     <div v-else-if="!view.length" class="empty">没有找到相关的成语</div>
 
     <template v-else>
-      <article class="card" :key="current.id">
+      <article class="card" :class="'fs-'+fontSize" :key="current.word"
+               @touchstart="onTs" @touchend="onTe">
         <div class="head">
           <h2 class="word">{{ current.word }}</h2>
-          <div class="pinyin">{{ current.pinyin }}</div>
-          <span class="cat-chip">{{ catOf(current.source) }}</span>
+          <div class="pinyin" v-show="showPinyin">{{ current.pinyin }}</div>
+          <div class="tags">
+            <span class="tag" v-for="t in current.tags" :key="t">{{ t }}</span>
+          </div>
         </div>
+
+        <blockquote class="quote" v-if="current.quote">
+          <span class="q">{{ current.quote }}</span>
+          <cite class="src">—— {{ current.source }}</cite>
+        </blockquote>
 
         <div class="story">
           <p v-for="(p,i) in paras" :key="i">{{ p }}</p>
         </div>
 
-        <div class="fold">
-          <button class="fold-btn" @click="showQuote = !showQuote">
-            <span>出自古籍原文</span>
-            <span :class="['arrow', {open: showQuote}]">▶</span>
-          </button>
-          <blockquote v-if="showQuote" class="quote">
-            <span class="q">{{ current.quote }}</span>
-            <cite class="src">—— {{ current.source }}</cite>
-          </blockquote>
-        </div>
-
-        <div v-if="showMoral" class="moral">
+        <div class="moral" v-show="showMoral">
           <span class="lab">讲个道理</span>
           <span class="txt">{{ current.moral }}</span>
         </div>
       </article>
+
+      <div class="controls">
+        <button :class="{on: fontSize==='s'}" @click="fontSize='s'">小</button>
+        <button :class="{on: fontSize==='m'}" @click="fontSize='m'">中</button>
+        <button :class="{on: fontSize==='l'}" @click="fontSize='l'">大</button>
+        <button :class="{on: showPinyin}" @click="showPinyin=!showPinyin">{{ showPinyin ? '隐拼音' : '显拼音' }}</button>
+        <button :class="{on: dark}" @click="toggleDark">{{ dark ? '日间' : '夜读' }}</button>
+        <button :class="{on: isFav}" @click="toggleFav">{{ isFav ? '已藏' : '收藏' }}</button>
+        <button @click="shareCard">分享卡</button>
+      </div>
 
       <nav class="nav">
         <button @click="prev">上一则</button>
         <button class="primary" @click="shuffle">换一则</button>
         <button @click="next">下一则</button>
       </nav>
-
-      <div class="tools">
-        <button @click="showMoral = !showMoral">
-          {{ showMoral ? '藏起道理' : '讲讲道理' }}
-        </button>
-      </div>
 
       <div class="meta">第 {{ idx + 1 }} 则 / 共 {{ view.length }} 则</div>
     </template>
@@ -361,6 +286,7 @@
     <div class="seg">
       <button :class="{on: tocMode==='pinyin'}" @click="tocMode='pinyin'">按拼音</button>
       <button :class="{on: tocMode==='cat'}" @click="tocMode='cat'">按出处</button>
+      <button :class="{on: tocMode==='theme'}" @click="tocMode='theme'">按主题</button>
     </div>
     <div class="toc-search">
       <span class="ico"></span>
@@ -380,11 +306,22 @@
       <div v-if="!tocGroups.length" class="empty">目录里没有匹配的</div>
     </div>
   </div>
+
+  <!-- 分享卡 -->
+  <div class="overlay" v-if="showShare" @click="showShare=false"></div>
+  <div class="share-sheet" :class="{open: showShare}">
+    <img v-if="shareImg" :src="shareImg" class="share-img" alt="成语分享卡" />
+    <div class="share-actions" v-if="shareImg">
+      <a :href="shareImg" download="成语卡.png" class="btn solid">保存图片</a>
+      <button class="btn ghost" @click="showShare=false">关闭</button>
+    </div>
+    <div class="share-hint">手机可长按图片保存到相册</div>
+  </div>
 </div>
 
 <script>
   const { createApp } = Vue;
-  const APP_VERSION = '9';
+  const APP_VERSION = '10';
 
   function randInt(n){
     if(n <= 0) return 0;
@@ -396,7 +333,7 @@
     return Math.floor(Math.random() * n);
   }
 
-  // 出处五大类：经部 / 史部 / 子部 / 集部 / 笔记佛典（数据可推导，不改故事文本）
+  // 出处五大类（数据可推导，不改故事文本）
   function catOf(src){
     const s = src || '';
     if(/诗经|书经|礼记|论语|孟子|左传|易|中庸|大学|孝经|公羊|穀梁|仪礼/.test(s)) return '经部';
@@ -407,117 +344,216 @@
     return '其他';
   }
 
+  function initialsOf(pinyin){
+    return (pinyin||'').toLowerCase().split(/\s+/).map(w => w[0] || '').join('');
+  }
+
+  const THEMES = ['全部','动物','人物','战争','自然','学习','品德','友谊','励志','智慧','历史','数字','颜色','身体','言语','收藏'];
+
   createApp({
     data(){
+      let favs = [];
+      try { favs = JSON.parse(localStorage.getItem('idiom_favs') || '[]'); } catch(e){}
       return {
         loaded:false,
         all:[],
         query:'',
+        theme:'全部',
+        themes:THEMES,
         idx:0,
-        showQuote:false,
+        showQuote:true,
         showMoral:false,
         showToc:false,
         tocMode:'pinyin',
         tocQuery:'',
+        fontSize:'m',
+        showPinyin:true,
+        dark:false,
+        favs,
+        showShare:false,
+        shareImg:'',
+        tx:0,
       };
     },
     computed:{
       view(){
-        const q = this.query.trim().toLowerCase();
-        if(!q) return this.all;
-        return this.all.filter(s =>
-          s.word.includes(q) ||
-          s.pinyin.toLowerCase().replace(/\s/g,'').includes(q.replace(/\s/g,''))
-        );
+        const q = this.query.trim().toLowerCase().replace(/\s/g,'');
+        let base = this.all;
+        if(this.theme === '收藏'){
+          base = base.filter(s => this.favs.includes(s.word));
+        } else if(this.theme && this.theme !== '全部'){
+          base = base.filter(s => (s.tags || []).includes(this.theme));
+        }
+        if(q){
+          base = base.filter(s =>
+            s.word.includes(q) ||
+            s.py.includes(q) ||
+            s.initials.includes(q)
+          );
+        }
+        return base;
       },
       current(){
         return this.view[this.idx] || null;
+      },
+      isFav(){
+        return this.current ? this.favs.includes(this.current.word) : false;
       },
       paras(){
         if(!this.current) return [];
         return this.current.story.split(/\n+/).map(s => s.trim()).filter(Boolean);
       },
       tocGroups(){
-        const q = this.tocQuery.trim().toLowerCase();
+        const q = this.tocQuery.trim().toLowerCase().replace(/\s/g,'');
         let list = this.all;
         if(q){
           list = list.filter(s =>
             s.word.includes(q) ||
-            s.pinyin.toLowerCase().replace(/\s/g,'').includes(q.replace(/\s/g,''))
+            s.py.includes(q) ||
+            s.initials.includes(q)
           );
         }
         const map = {};
         for(const s of list){
-          const key = this.tocMode === 'pinyin'
-            ? (() => {
-                const f = (s.pinyin.trim()[0] || '?').normalize('NFD');
-                let k = '';
-                for (const ch of f) {
-                  const cp = ch.codePointAt(0);
-                  if (cp < 0x0300 || cp > 0x036F) k += ch;
-                }
-                return k.toUpperCase();
-              })()
-            : catOf(s.source);
-          (map[key] = map[key] || []).push({
-            word: s.word,
-            pinyin: s.pinyin,
-            cat: catOf(s.source),
-          });
+          let key;
+          if(this.tocMode === 'pinyin'){
+            const f = (s.pinyin.trim()[0] || '?').normalize('NFD');
+            let k = '';
+            for (const ch of f){ const cp = ch.codePointAt(0); if(cp < 0x0300 || cp > 0x036F) k += ch; }
+            key = k.toUpperCase();
+          } else if(this.tocMode === 'cat'){
+            key = catOf(s.source);
+          } else {
+            key = (s.tags && s.tags[0]) || '其他';
+          }
+          const cat = catOf(s.source);
+          (map[key] = map[key] || []).push({ word:s.word, pinyin:s.pinyin, cat });
         }
         let keys = Object.keys(map);
-        if(this.tocMode === 'pinyin'){
-          keys.sort();
-        }else{
+        if(this.tocMode === 'pinyin'){ keys.sort(); }
+        else if(this.tocMode === 'cat'){
           const order = {'经部':0,'史部':1,'子部':2,'集部':3,'笔记佛典':4,'其他':5};
           keys.sort((a,b) => (order[a] ?? 9) - (order[b] ?? 9));
-        }
+        } else { keys.sort(); }
         return keys.map(k => ({ key:k, items:map[k] }));
       },
     },
     watch:{
       query(){ this.idx = 0; },
-      current(){ this.showQuote = false; },
+      theme(){ this.idx = 0; },
+      favs(){
+        try { localStorage.setItem('idiom_favs', JSON.stringify(this.favs)); } catch(e){}
+      },
+      current(){ this.showQuote = true; },
+      dark(v){ document.documentElement.setAttribute('data-theme', v ? 'dark' : 'light'); },
     },
     methods:{
       catOf,
       shuffle(){ if(this.view.length) this.idx = randInt(this.view.length); },
-      prev(){
-        const n = this.view.length;
-        if(n) this.idx = (this.idx - 1 + n) % n;
-      },
-      next(){
-        const n = this.view.length;
-        if(n) this.idx = (this.idx + 1) % n;
-      },
+      prev(){ const n = this.view.length; if(n) this.idx = (this.idx - 1 + n) % n; },
+      next(){ const n = this.view.length; if(n) this.idx = (this.idx + 1) % n; },
       openToc(){ this.tocQuery = ''; this.showToc = true; },
       closeToc(){ this.showToc = false; },
       jumpTo(word){
-        this.tocQuery = '';
-        this.query = '';
+        this.tocQuery = ''; this.query = ''; this.theme = '全部';
         const i = this.all.findIndex(s => s.word === word);
         if(i >= 0) this.idx = i;
         this.showToc = false;
       },
+      toggleDark(){ this.dark = !this.dark; },
+      toggleFav(){
+        if(!this.current) return;
+        const w = this.current.word;
+        const i = this.favs.indexOf(w);
+        if(i >= 0) this.favs.splice(i,1); else this.favs.push(w);
+      },
+      onTs(e){ if(e.changedTouches && e.changedTouches[0]) this.tx = e.changedTouches[0].clientX; },
+      onTe(e){
+        if(!e.changedTouches || !e.changedTouches[0]) return;
+        const dx = e.changedTouches[0].clientX - this.tx;
+        if(dx < -40) this.next(); else if(dx > 40) this.prev();
+      },
+      shareCard(){
+        if(!this.current) return;
+        const c = document.createElement('canvas');
+        c.width = 1080; c.height = 1440;
+        const x = c.getContext('2d');
+        x.fillStyle = '#f7f1e3'; x.fillRect(0,0,1080,1440);
+        x.strokeStyle = '#b5341f'; x.lineWidth = 6;
+        x.strokeRect(48,48,1080-96,1440-96);
+        x.fillStyle = '#b5341f';
+        x.font = '600 40px "Songti SC","SimSun",serif';
+        x.textAlign = 'center';
+        x.fillText('成 语 小 书', 540, 140);
+        x.fillStyle = '#2b2620';
+        x.font = '700 110px "Songti SC","SimSun",serif';
+        x.fillText(this.current.word, 540, 320);
+        x.fillStyle = '#b5341f';
+        x.font = '400 38px sans-serif';
+        x.fillText(this.current.pinyin, 540, 400);
+        const tags = (this.current.tags||[]).join(' · ');
+        x.fillStyle = '#5b8c6e';
+        x.font = '400 30px sans-serif';
+        x.fillText(tags, 540, 460);
+        x.fillStyle = '#2b2620';
+        x.font = '400 40px "Songti SC","SimSun",serif';
+        let y = 560;
+        y = this._wrap(x, this.current.quote, 110, 1240, y, 64);
+        x.fillStyle = '#6b6052';
+        x.font = '400 32px sans-serif';
+        x.fillText('—— ' + this.current.source, 540, y + 30);
+        y = y + 90;
+        x.fillStyle = '#b5341f';
+        x.font = '600 30px sans-serif';
+        x.textAlign = 'left';
+        x.fillText('讲个道理', 110, y);
+        y += 50;
+        x.fillStyle = '#2b2620';
+        x.font = '400 38px "Songti SC","SimSun",serif';
+        y = this._wrap(x, this.current.moral, 110, 1240, y, 60);
+        this.shareImg = c.toDataURL('image/png');
+        this.showShare = true;
+      },
+      _wrap(ctx, text, x, x2, y, lh){
+        const max = x2 - x;
+        let line = '';
+        for(const ch of (text || '')){
+          if(ctx.measureText(line + ch).width > max && line){
+            ctx.fillText(line, x, y); line = ch; y += lh;
+          } else { line += ch; }
+        }
+        if(line) { ctx.fillText(line, x, y); y += lh; }
+        return y;
+      },
       async load(){
         try{
           const res = await fetch('stories.json?v=' + APP_VERSION);
-          this.all = await res.json();
-        }catch(e){
-          this.all = [];
-        }
+          const raw = await res.json();
+          this.all = raw.map(s => ({
+            ...s,
+            py: (s.pinyin||'').toLowerCase().replace(/\s+/g,''),
+            initials: initialsOf(s.pinyin),
+          }));
+        }catch(e){ this.all = []; }
         this.loaded = true;
         this.idx = randInt(this.all.length);
       },
+      onKey(e){
+        if(this.showToc || this.showShare) return;
+        if(e.key === 'ArrowLeft') this.prev();
+        else if(e.key === 'ArrowRight') this.next();
+      },
     },
-    mounted(){ this.load(); },
+    mounted(){
+      if(this.dark) document.documentElement.setAttribute('data-theme','dark');
+      this.load();
+      window.addEventListener('keydown', this.onKey);
+    },
   }).mount('#app');
 </script>
 
   <script>
     // ===== Service Worker 注册（微信内禁用，避免缓存陷阱）=====
-    // 非微信浏览器注册「透明穿透版」sw.js（不缓存任何资源），
-    // 由 sw.js 在激活时强制刷新所有已打开页面，从根上解决「升级后仍显示旧版」。
     if('serviceWorker' in navigator && !/MicroMessenger/i.test(navigator.userAgent)){
       window.addEventListener('load', ()=>{
         navigator.serviceWorker.register('sw.js').catch(()=>{});
