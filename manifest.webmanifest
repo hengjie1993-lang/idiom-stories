@@ -1,7 +1,7 @@
 {
   "name": "成语小书 · 成语故事",
   "short_name": "成语小书",
-  "description": "1558 则成语典故，白话改写，亲子共读。成语小书是小诗囊的姊妹篇。",
+  "description": "1558 则成语典故，白话改写，随手翻读。成语小书是小诗囊的姊妹篇。",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#faf6ee",

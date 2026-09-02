@@ -284,7 +284,7 @@
   <div class="wrap">
     <header>
       <div class="topbar">
-        <span class="brand-mini">亲子共读</span>
+        <span class="brand-mini">随手翻读</span>
         <button class="toc-open" @click="openToc">
           <span class="bars"><i></i></span> 目录 {{ all.length }} 则
         </button>
@@ -347,7 +347,7 @@
 
     <footer>
       故事依据公版古籍原文与台湾教育部《成语典》白话典故改写<br />
-      共 {{ all.length }} 则 · 仅供亲子共读参考
+      共 {{ all.length }} 则 · 仅供阅读参考
     </footer>
   </div>
 
@@ -384,7 +384,7 @@
 
 <script>
   const { createApp } = Vue;
-  const APP_VERSION = '8';
+  const APP_VERSION = '9';
 
   function randInt(n){
     if(n <= 0) return 0;
