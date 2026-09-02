@@ -7,7 +7,10 @@
 <title>成语小书</title>
 <link rel="manifest" href="manifest.webmanifest" />
 <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script type="module">
+  import * as QRCodeNS from 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/+esm';
+  window.QRCode = QRCodeNS;
+</script>
 <style>
   :root{
     /* 新中式 · 宣纸米黄 */
@@ -323,7 +326,7 @@
 
 <script>
   const { createApp } = Vue;
-  const APP_VERSION = '12';
+  const APP_VERSION = '13';
 
   function randInt(n){
     if(n <= 0) return 0;
@@ -524,7 +527,7 @@
         x.fillStyle = '#6b6052';
         x.font = '400 30px "Songti SC","SimSun",serif';
         x.fillText('微信 / 浏览器扫一扫', 140, 1180);
-        x.fillText('在手机上继续读', 140, 1230);
+        x.fillText('直达这则成语', 140, 1230);
         x.fillStyle = '#9a8f7a';
         x.font = '400 22px sans-serif';
         x.fillText('hengjie1993-lang.github.io', 140, 1285);
@@ -532,9 +535,9 @@
 
         try {
           if(window.QRCode && QRCode.toCanvas){
-            const url = 'https://hengjie1993-lang.github.io/idiom-stories/';
+            const url = 'https://hengjie1993-lang.github.io/idiom-stories/?q=' + encodeURIComponent(s.word);
             const qr = document.createElement('canvas');
-            await QRCode.toCanvas(qr, url, { width:qrSize, margin:1, color:{ dark:'#2b2620', light:'#00000000' } });
+            await QRCode.toCanvas(qr, url, { width:qrSize, margin:1, color:{ dark:'#2b2620', light:'#f7f1e3' } });
             x.drawImage(qr, qrX, qrY, qrSize, qrSize);
           } else { throw new Error('no qrcode'); }
         } catch(e){
@@ -579,7 +582,9 @@
           }));
         }catch(e){ this.all = []; }
         this.loaded = true;
-        this.idx = randInt(this.all.length);
+        const q = (new URLSearchParams(location.search).get('q') || '').trim();
+        const di = q ? this.all.findIndex(s => s.word === q) : -1;
+        this.idx = di >= 0 ? di : randInt(this.all.length);
       },
       onKey(e){
         if(this.showToc || this.showShare) return;
