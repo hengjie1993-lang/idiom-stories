@@ -44,7 +44,7 @@ python -m http.server 8231
 
 ## 改动铁律（务必遵守）
 
-1. **每次改动必须同步升 `APP_VERSION`**（`index.html` 常量 + `sw.js` 的 `APP_VERSION`）。当前版本 **v15**（分享卡正文改为该成语小故事前 100 字 + 省略号）。这是绕过手机微信缓存的唯一手段。
+1. **每次改动必须同步升 `APP_VERSION`**（`index.html` 常量 + `sw.js` 的 `APP_VERSION`）。当前版本 **v16**（分享卡底部「保存图片」改为「分享转发」，用 Web Share API 调起系统分享，不支持时回退下载；保存改由长按图片）。这是绕过手机微信缓存的唯一手段。
 2. **微信内置浏览器禁用 Service Worker**（检测 `MicroMessenger` UA 后不注册）。微信对 SW 支持差、缓存陷阱多。
 3. **隐藏元素用 `v-if` 销毁节点**，不要用 `visibility:hidden`。
 4. 数据源以公版古籍原文 + 自写改写为基准；教育部《成语典》(CC BY-ND) 经主人授权可参考使用，但**仍禁止**从其他无 License / 来源不明仓库扒取现成故事文本。

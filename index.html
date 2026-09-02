@@ -327,16 +327,16 @@
   <div class="share-sheet" :class="{open: showShare}">
     <img v-if="shareImg" :src="shareImg" class="share-img" alt="成语分享卡" />
     <div class="share-actions" v-if="shareImg">
-      <a :href="shareImg" download="成语卡.png" class="btn solid">保存图片</a>
+      <button class="btn solid" @click="shareForward">分享转发</button>
       <button class="btn ghost" @click="showShare=false">关闭</button>
     </div>
-    <div class="share-hint">手机可长按图片保存到相册</div>
+    <div class="share-hint">手机可长按图片：保存相册 / 发送给朋友</div>
   </div>
 </div>
 
 <script>
   const { createApp } = Vue;
-  const APP_VERSION = '15';
+  const APP_VERSION = '16';
 
   function randInt(n){
     if(n <= 0) return 0;
@@ -575,6 +575,26 @@
 
         this.shareImg = c.toDataURL('image/png');
         this.showShare = true;
+      },
+      async shareForward(){
+        if(!this.shareImg) return;
+        const name = (this.current ? this.current.word : '成语') + '卡.png';
+        const text = '一起来读：' + (this.current ? this.current.word : '成语') + '（成语小书）';
+        try {
+          const blob = await (await fetch(this.shareImg)).blob();
+          const file = new File([blob], name, { type:'image/png' });
+          if(navigator.canShare && navigator.canShare({ files:[file] })){
+            await navigator.share({ files:[file], title:'成语小书', text });
+            return;
+          }
+          if(navigator.share){
+            await navigator.share({ title:'成语小书', text, url:'https://hengjie1993-lang.github.io/idiom-stories/' });
+            return;
+          }
+        } catch(e){ /* 用户取消或不支持，落到下方下载兜底 */ }
+        const a = document.createElement('a');
+        a.href = this.shareImg; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
       },
       _wrap(ctx, text, x, x2, y, lh, maxLines = 999){
         const max = x2 - x;
