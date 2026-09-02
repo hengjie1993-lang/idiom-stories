@@ -6,7 +6,7 @@
 //  - 保留 SW 以支持「添加到主屏幕」，但不再承担缓存职责。
 //  - 微信内置浏览器禁用了 SW（见 index.html 的 UA 判定），此处逻辑对微信不生效。
 
-const APP_VERSION = '11';
+const APP_VERSION = '12';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

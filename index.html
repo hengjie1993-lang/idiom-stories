@@ -7,6 +7,7 @@
 <title>成语小书</title>
 <link rel="manifest" href="manifest.webmanifest" />
 <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
   :root{
     /* 新中式 · 宣纸米黄 */
@@ -322,7 +323,7 @@
 
 <script>
   const { createApp } = Vue;
-  const APP_VERSION = '11';
+  const APP_VERSION = '12';
 
   function randInt(n){
     if(n <= 0) return 0;
@@ -474,43 +475,77 @@
         const dx = e.changedTouches[0].clientX - this.tx;
         if(dx < -40) this.next(); else if(dx > 40) this.prev();
       },
-      shareCard(){
+      async shareCard(){
         if(!this.current) return;
+        const s = this.current;
         const c = document.createElement('canvas');
         c.width = 1080; c.height = 1440;
         const x = c.getContext('2d');
         x.fillStyle = '#f7f1e3'; x.fillRect(0,0,1080,1440);
         x.strokeStyle = '#b5341f'; x.lineWidth = 6;
         x.strokeRect(48,48,1080-96,1440-96);
-        x.fillStyle = '#b5341f';
-        x.font = '600 40px "Songti SC","SimSun",serif';
+        x.strokeStyle = '#e3d9c4'; x.lineWidth = 1.5;
+        x.strokeRect(64,64,1080-128,1440-128);
+
         x.textAlign = 'center';
-        x.fillText('成 语 小 书', 540, 140);
-        x.fillStyle = '#2b2620';
-        x.font = '700 110px "Songti SC","SimSun",serif';
-        x.fillText(this.current.word, 540, 320);
         x.fillStyle = '#b5341f';
-        x.font = '400 38px sans-serif';
-        x.fillText(this.current.pinyin, 540, 400);
-        const tags = (this.current.tags||[]).join(' · ');
-        x.fillStyle = '#5b8c6e';
-        x.font = '400 30px sans-serif';
-        x.fillText(tags, 540, 460);
-        x.strokeStyle = '#e3d9c4'; x.lineWidth = 2;
-        x.beginPath(); x.moveTo(120, 520); x.lineTo(960, 520); x.stroke();
-        let y = 580;
-        x.fillStyle = '#b5341f';
-        x.font = '600 30px sans-serif';
-        x.textAlign = 'left';
-        x.fillText('讲个道理', 120, y);
-        y += 54;
-        x.fillStyle = '#2b2620';
-        x.font = '400 40px "Songti SC","SimSun",serif';
-        y = this._wrap(x, this.current.moral, 120, 960, y, 64, 12);
-        x.textAlign = 'center';
+        x.font = '600 38px "Songti SC","SimSun",serif';
+        x.fillText('成 语 小 书', 540, 150);
         x.fillStyle = '#9a8f7a';
         x.font = '400 24px sans-serif';
-        x.fillText('—— ' + (this.current.source || '成语小书') + ' ——', 540, 1360);
+        x.fillText('随手翻读 · 共 ' + this.all.length + ' 则', 540, 196);
+
+        x.fillStyle = '#2b2620';
+        x.font = '700 120px "Songti SC","SimSun",serif';
+        x.fillText(s.word, 540, 360);
+        x.fillStyle = '#b5341f';
+        x.font = '400 38px sans-serif';
+        x.fillText(s.pinyin, 540, 430);
+        const tags = (s.tags||[]).join(' · ');
+        x.fillStyle = '#5b8c6e';
+        x.font = '400 30px sans-serif';
+        x.fillText(tags, 540, 488);
+
+        x.strokeStyle = '#e3d9c4'; x.lineWidth = 2;
+        x.beginPath(); x.moveTo(140, 540); x.lineTo(940, 540); x.stroke();
+
+        let y = 600;
+        x.textAlign = 'left';
+        x.fillStyle = '#b5341f';
+        x.font = '600 32px sans-serif';
+        x.fillText('讲个道理', 140, y);
+        y += 56;
+        x.fillStyle = '#2b2620';
+        x.font = '400 40px "Songti SC","SimSun",serif';
+        y = this._wrap(x, s.moral, 140, 940, y, 64, 8);
+
+        const qrSize = 220, qrX = 1080 - 64 - qrSize - 24, qrY = 1120;
+        x.textAlign = 'left';
+        x.fillStyle = '#6b6052';
+        x.font = '400 30px "Songti SC","SimSun",serif';
+        x.fillText('微信 / 浏览器扫一扫', 140, 1180);
+        x.fillText('在手机上继续读', 140, 1230);
+        x.fillStyle = '#9a8f7a';
+        x.font = '400 22px sans-serif';
+        x.fillText('hengjie1993-lang.github.io', 140, 1285);
+        x.fillText('/idiom-stories', 140, 1318);
+
+        try {
+          if(window.QRCode && QRCode.toCanvas){
+            const url = 'https://hengjie1993-lang.github.io/idiom-stories/';
+            const qr = document.createElement('canvas');
+            await QRCode.toCanvas(qr, url, { width:qrSize, margin:1, color:{ dark:'#2b2620', light:'#00000000' } });
+            x.drawImage(qr, qrX, qrY, qrSize, qrSize);
+          } else { throw new Error('no qrcode'); }
+        } catch(e){
+          x.strokeStyle = '#b5341f'; x.lineWidth = 2;
+          x.strokeRect(qrX, qrY, qrSize, qrSize);
+          x.fillStyle = '#b5341f'; x.textAlign = 'center';
+          x.font = '400 24px sans-serif';
+          x.fillText('扫码访问', qrX + qrSize/2, qrY + qrSize/2);
+          x.textAlign = 'left';
+        }
+
         this.shareImg = c.toDataURL('image/png');
         this.showShare = true;
       },
